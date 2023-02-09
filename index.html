@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Canvas</title>
+</head>
+<body>
+<canvas id="canvas" width="800" height="500"></canvas>
+
+<script>
+    let config = {
+        speedMin: 0.01,
+        speedMax: 0.1,
+
+        directionX: 1,
+        directionY: 1,
+
+        frameWidth: 800,
+        frameHeight: 500,
+
+        boxCount: 20,
+
+        boxSizeMin: 10,
+        boxSizeMax: 60,
+    }
+
+    window.onload = () => {
+        draw()
+    }
+
+    let boxConfigs = []
+    for (let i = 0; i < config.boxCount; i++) {
+        boxConfigs.push({
+            name: i,
+            color: randomColor(),
+            speedX: randomSpeed().speedX,
+            speedY: randomSpeed().speedY,
+            directionX: randomDirection(),
+            directionY: randomDirection(),
+            boxSize: randomBoxSize(config.boxSizeMin,config.boxSizeMax), // 方块大小
+            position: randomPosition(config) // 位置
+        })
+    }
+
+    function draw() {
+        let context = document.getElementById('canvas').getContext('2d')
+        context.clearRect(0, 0, config.frameWidth, config.frameHeight)
+
+        boxConfigs.forEach(box => {
+            if (box.position.x > config.frameWidth - box.boxSize.width) box.directionX = -1
+            if (box.position.y > config.frameHeight - box.boxSize.height)box.directionY = -1
+            if (box.position.x < 0) box.directionX = 1
+            if (box.position.y < 0) box.directionY = 1
+
+            box.position.x = box.position.x + box.speedX * box.directionX
+            box.position.y = box.position.y + box.speedY * box.directionY
+
+            context.fillRect(box.position.x, box.position.y, box.boxSize.width, box.boxSize.height)
+            context.fillStyle = box.color
+            context.fill()
+        })
+
+        window.requestAnimationFrame(draw)
+    }
+
+    /**
+     * 生成随机 box 大小
+     * @param min
+     * @param max
+     * @returns {{frameWidth: *, frameHeight: *}}
+     */
+    function randomBoxSize(min, max){
+        let random = Math.random() * (max - min) + min
+        return {
+            width: random,
+            height: random
+        }
+    }
+    /**
+     * 随机位置
+     * @param config
+     * @returns {{x: *, y: *}}
+     */
+    function randomPosition(config){
+        let randomX = Math.random() * config.frameWidth
+        let randomY = Math.random() * config.frameHeight
+        return {
+            x: randomX,
+            y: randomY
+        }
+    }
+
+    /**
+     * 输出随机 1 或 -1
+     * @returns {number}
+     */
+    function randomDirection(){
+        let random = Math.random()
+        if (random > 0.5){
+            return 1
+        } else {
+            return -1
+        }
+    }
+    /**
+     * 输出速度值
+     */
+    function randomSpeed(){
+        let randomX = Math.random() * (config.speedMax - config.speedMin) + config.speedMin
+        let randomY = Math.random() * (config.speedMax - config.speedMin) + config.speedMin
+        return {
+            speedX: randomX,
+            speedY: randomY
+        }
+    }
+
+    /**
+     * 随机颜色值
+     * @returns string
+     */
+    function randomColor(){
+        let randomR = Math.random() * 255
+        let randomG = Math.random() * 255
+        let randomB = Math.random() * 255
+        return `rgb(${randomR}, ${randomG}, ${randomG})`
+    }
+
+    /**
+     * 随机透明度
+     * @returns {number}
+     */
+    function randomOpacity(){
+        return Math.random()
+    }
+
+</script>
+
+
+</body>
+<style>
+    #canvas {
+        border: 1px solid gray;
+        height: 500px;
+        width: 800px;
+    }
+</style>
+</html>
