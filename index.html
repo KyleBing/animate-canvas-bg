@@ -14,17 +14,20 @@
     }
     let configBox = {
         speedMin: 0.01,
-        speedMax: 0.3,
+        speedMax: 3,
 
         directionX: 1,
         directionY: 1,
 
-        boxCount: 20,
+        boxCount: 100,
 
-        boxSizeMin: 20,
-        boxSizeMax: 120,
+        boxSizeMin: 20, // 方块大小范围
+        boxSizeMax: 200,
 
-        colorHMin: 160, // 颜色 hsl h取值
+        opacityMin: 0.3, // 透明度范围 0-1
+        opacityMax: 0.9,
+
+        colorHMin: 160, // 颜色范围 hsl h取值
         colorHMax: 180
     }
 
@@ -58,12 +61,14 @@
         gradientLayer.setAttribute('height', configFrame.height)
         gradientLayer.style.width = `${configFrame.width / 2}px`
         gradientLayer.style.height = `${configFrame.height / 2}px`
+        gradientLayer.style.zIndex = '-3'
         let boxLayer = document.createElement("canvas")
         boxLayer.setAttribute('id', 'boxLayer')
         boxLayer.setAttribute('width', configFrame.width)
         boxLayer.setAttribute('height', configFrame.height)
         boxLayer.style.width = `${configFrame.width / 2}px`
         boxLayer.style.height = `${configFrame.height / 2}px`
+        gradientLayer.style.zIndex = '-2'
         document.documentElement.append(gradientLayer, boxLayer)
 
         configGradient.h = randomFloat(configGradient.hMin, configGradient.hMax)
@@ -73,7 +78,7 @@
         for (let i = 0; i < configBox.boxCount; i++) {
             boxBuffer.push({
                 name: i,
-                color: randomColor(configBox.colorHMin, configBox.colorHMax),
+                color: randomColor(configBox.colorHMin, configBox.colorHMax, configBox.opacityMin, configBox.opacityMax),
                 speedX: randomSpeed().speedX,
                 speedY: randomSpeed().speedY,
                 directionX: randomDirection(),
@@ -82,12 +87,8 @@
                 position: randomPosition(configFrame) // 位置
             })
         }
-
         draw()
-
     }
-
-
 
 
     function draw() {
@@ -184,9 +185,10 @@
      * 随机颜色值
      * @returns string
      */
-    function randomColor(min, max){
-        let randomH = randomInt(min, max)
-        return `hsl(${randomH}, 100%, 50%)`
+    function randomColor(hMin, hMax, opacityMin, opacityMax){
+        let randomH = randomInt(hMin, hMax)
+        let randomOpacity = randomFloat(opacityMin, opacityMax)
+        return `hsl(${randomH}, 100%, 50%, ${randomOpacity})`
     }
 
     /**
@@ -222,6 +224,7 @@
 </body>
 <style>
     canvas {
+        user-select: none;
         position: fixed;
         top: 0;
         left: 0;
