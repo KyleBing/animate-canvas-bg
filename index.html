@@ -33,15 +33,18 @@
         hMin: 10,
         hMax: 80,
 
-        speed: 1,
-        gap: 120 // 渐变始终的颜色跨度 0-255
+        speed: 0.1,
+        gap: 60 // 渐变始终的颜色跨度 0-255
     }
+
+    let boxBuffer = []
 
     window.onload = () => {
         init()
     }
 
     function init(){
+
         let gradientLayer = document.createElement("canvas")
         gradientLayer.setAttribute('id', 'gradientLayer')
         gradientLayer.setAttribute('width', configBox.frameWidth)
@@ -58,23 +61,26 @@
 
         configGradient.h = randomFloat(configGradient.hMin, configGradient.hMax)
 
+        // CREATE BOXES
+        boxBuffer = []
+        for (let i = 0; i < configBox.boxCount; i++) {
+            boxBuffer.push({
+                name: i,
+                color: randomColor(),
+                speedX: randomSpeed().speedX,
+                speedY: randomSpeed().speedY,
+                directionX: randomDirection(),
+                directionY: randomDirection(),
+                boxSize: randomBoxSize(configBox.boxSizeMin,configBox.boxSizeMax), // 方块大小
+                position: randomPosition(configBox) // 位置
+            })
+        }
+
         draw()
 
     }
 
-    let boxConfigs = []
-    for (let i = 0; i < configBox.boxCount; i++) {
-        boxConfigs.push({
-            name: i,
-            color: randomColor(),
-            speedX: randomSpeed().speedX,
-            speedY: randomSpeed().speedY,
-            directionX: randomDirection(),
-            directionY: randomDirection(),
-            boxSize: randomBoxSize(configBox.boxSizeMin,configBox.boxSizeMax), // 方块大小
-            position: randomPosition(configBox) // 位置
-        })
-    }
+
 
 
     function draw() {
@@ -82,13 +88,12 @@
         let contextGradient = document.getElementById('gradientLayer').getContext('2d')
         contextGradient.clearRect(0, 0, configBox.frameWidth, configBox.frameHeight)
 
-        configGradient.h = configGradient.h + 1
+        configGradient.h = configGradient.h + configGradient.speed
 
         if (configGradient.h > 360) configGradient.h = 0
 
-        console.log(JSON.stringify(configGradient))
-
         let gradient = contextGradient.createLinearGradient(0, 0, configBox.frameWidth, configBox.frameHeight)
+        // let gradient = contextGradient.createRadialGradient(configBox.frameWidth/2, configBox.frameHeight/2, 500, configBox.frameWidth/2, configBox.frameHeight/2, 800)
         gradient.addColorStop(0, `hsl(${configGradient.h}, ${configGradient.s}%, ${configGradient.l}%)`)
         gradient.addColorStop(1, `hsl(${configGradient.h + configGradient.gap}, ${configGradient.s}%, ${configGradient.l}%)`)
         contextGradient.fillStyle = gradient
@@ -99,7 +104,7 @@
         let context = document.getElementById('boxLayer').getContext('2d')
         context.clearRect(0, 0, configBox.frameWidth, configBox.frameHeight)
 
-        boxConfigs.forEach(box => {
+        boxBuffer.forEach(box => {
             if (box.position.x > configBox.frameWidth - box.boxSize.width) box.directionX = -1
             if (box.position.y > configBox.frameHeight - box.boxSize.height)box.directionY = -1
             if (box.position.x < 0) box.directionX = 1
