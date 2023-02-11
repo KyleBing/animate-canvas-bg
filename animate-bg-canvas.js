@@ -54,22 +54,35 @@ window.onload = () => {
     init()
 }
 
-function init(){
+window.onresize = () => {
+    configFrame.height = innerHeight * 2
+    configFrame.width = innerWidth * 2
+    let gradientLayer = document.getElementById('gradientLayer')
+    let boxLayer = document.getElementById('boxLayer')
+    updateFrameAttribute(gradientLayer, boxLayer)
+}
 
-    let gradientLayer = document.createElement("canvas")
+function updateFrameAttribute(gradientLayer, boxLayer){
     gradientLayer.setAttribute('id', 'gradientLayer')
     gradientLayer.setAttribute('width', configFrame.width)
     gradientLayer.setAttribute('height', configFrame.height)
     gradientLayer.style.width = `${configFrame.width / 2}px`
     gradientLayer.style.height = `${configFrame.height / 2}px`
     gradientLayer.style.zIndex = '-3'
-    let boxLayer = document.createElement("canvas")
+
     boxLayer.setAttribute('id', 'boxLayer')
     boxLayer.setAttribute('width', configFrame.width)
     boxLayer.setAttribute('height', configFrame.height)
     boxLayer.style.width = `${configFrame.width / 2}px`
     boxLayer.style.height = `${configFrame.height / 2}px`
-    gradientLayer.style.zIndex = '-2'
+    boxLayer.style.zIndex = '-2'
+}
+
+function init(){
+
+    let gradientLayer = document.createElement("canvas")
+    let boxLayer = document.createElement("canvas")
+    updateFrameAttribute(gradientLayer, boxLayer)
     document.documentElement.append(gradientLayer, boxLayer)
 
     configGradient.h = randomFloat(configGradient.hMin, configGradient.hMax)
