@@ -5,10 +5,10 @@
     <title>Canvas</title>
 </head>
 <body>
-<canvas id="canvas" width="1600" height="1000"></canvas>
+<!--<canvas id="canvas" width="1600" height="1000"></canvas>-->
 
 <script>
-    let config = {
+    let configBox = {
         speedMin: 0.01,
         speedMax: 0.3,
 
@@ -24,12 +24,50 @@
         boxSizeMax: 120,
     }
 
+    let configGradient = {
+        rMin: 10,
+        rMax: 100,
+        gMin: 10,
+        gMax: 100,
+        bMin: 10,
+        bMax: 100,
+        r: 0,
+        g: 0,
+        b: 0,
+        speed: 1,
+        gap: 120 // 颜色跨度 0-255
+    }
+
     window.onload = () => {
+        init()
+    }
+
+    function init(){
+        let gradientLayer = document.createElement("canvas")
+        gradientLayer.setAttribute('id', 'gradientLayer')
+        gradientLayer.setAttribute('width', configBox.frameWidth)
+        gradientLayer.setAttribute('height', configBox.frameHeight)
+        gradientLayer.style.width = `${configBox.frameWidth / 2}px`
+        gradientLayer.style.height = `${configBox.frameHeight / 2}px`
+        let boxLayer = document.createElement("canvas")
+        boxLayer.setAttribute('id', 'boxLayer')
+        boxLayer.setAttribute('width', configBox.frameWidth)
+        boxLayer.setAttribute('height', configBox.frameHeight)
+        boxLayer.style.width = `${configBox.frameWidth / 2}px`
+        boxLayer.style.height = `${configBox.frameHeight / 2}px`
+        document.documentElement.append(gradientLayer, boxLayer)
+
+        configGradient.r = randomFloat(configGradient.rMin, configGradient.rMax)
+        configGradient.g = randomFloat(configGradient.gMin, configGradient.gMax)
+        configGradient.b = randomFloat(configGradient.bMin, configGradient.bMax)
+
+
         draw()
+
     }
 
     let boxConfigs = []
-    for (let i = 0; i < config.boxCount; i++) {
+    for (let i = 0; i < configBox.boxCount; i++) {
         boxConfigs.push({
             name: i,
             color: randomColor(),
@@ -37,18 +75,32 @@
             speedY: randomSpeed().speedY,
             directionX: randomDirection(),
             directionY: randomDirection(),
-            boxSize: randomBoxSize(config.boxSizeMin,config.boxSizeMax), // 方块大小
-            position: randomPosition(config) // 位置
+            boxSize: randomBoxSize(configBox.boxSizeMin,configBox.boxSizeMax), // 方块大小
+            position: randomPosition(configBox) // 位置
         })
     }
 
+
     function draw() {
-        let context = document.getElementById('canvas').getContext('2d')
-        context.clearRect(0, 0, config.frameWidth, config.frameHeight)
+        // gradient
+        let contextGradient = document.getElementById('gradientLayer').getContext('2d')
+        contextGradient.clearRect(0, 0, configBox.frameWidth, configBox.frameHeight)
+
+
+        let gradient = contextGradient.createLinearGradient(0, 0, configBox.frameWidth, configBox.frameHeight)
+        gradient.addColorStop(0, `rgb(${configGradient.r}, ${configGradient.g}, ${configGradient.b})`)
+        gradient.addColorStop(1, `rgb(${configGradient.r + configGradient.gap}, ${configGradient.g + configGradient.gap}, ${configGradient.b + configGradient.gap})`)
+        contextGradient.fillStyle = gradient
+        contextGradient.fillRect(0, 0, configBox.frameWidth, configBox.frameHeight)
+
+
+        // create boxes
+        let context = document.getElementById('boxLayer').getContext('2d')
+        context.clearRect(0, 0, configBox.frameWidth, configBox.frameHeight)
 
         boxConfigs.forEach(box => {
-            if (box.position.x > config.frameWidth - box.boxSize.width) box.directionX = -1
-            if (box.position.y > config.frameHeight - box.boxSize.height)box.directionY = -1
+            if (box.position.x > configBox.frameWidth - box.boxSize.width) box.directionX = -1
+            if (box.position.y > configBox.frameHeight - box.boxSize.height)box.directionY = -1
             if (box.position.x < 0) box.directionX = 1
             if (box.position.y < 0) box.directionY = 1
 
@@ -70,7 +122,7 @@
      * @returns {{frameWidth: *, frameHeight: *}}
      */
     function randomBoxSize(min, max){
-        let random = Math.random() * (max - min) + min
+        let random = randomFloat(min, max)
         return {
             width: random,
             height: random
@@ -106,8 +158,8 @@
      * 输出速度值
      */
     function randomSpeed(){
-        let randomX = Math.random() * (config.speedMax - config.speedMin) + config.speedMin
-        let randomY = Math.random() * (config.speedMax - config.speedMin) + config.speedMin
+        let randomX = Math.random() * (configBox.speedMax - configBox.speedMin) + configBox.speedMin
+        let randomY = Math.random() * (configBox.speedMax - configBox.speedMin) + configBox.speedMin
         return {
             speedX: randomX,
             speedY: randomY
@@ -133,12 +185,34 @@
         return Math.random()
     }
 
+    /**
+     * 生成随机整数
+     * @param min
+     * @param max
+     * @returns {number}
+     */
+    function randomInt(min, max){
+        return Number((Math.random() * (max - min) + min).toFixed(0))
+    }
+    /**
+     * 生成随机整数
+     * @param min
+     * @param max
+     * @returns {number}
+     */
+    function randomFloat(min, max){
+        return Number(Math.random() * (max - min) + min)
+    }
+
 </script>
 
 
 </body>
 <style>
-    #canvas {
+    canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
         border: 1px solid gray;
         height: 500px;
         width: 800px;
