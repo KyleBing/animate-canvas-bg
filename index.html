@@ -25,17 +25,16 @@
     }
 
     let configGradient = {
-        rMin: 10,
-        rMax: 100,
-        gMin: 10,
-        gMax: 100,
-        bMin: 10,
-        bMax: 100,
-        r: 0,
-        g: 0,
-        b: 0,
+        h: 0, // 0-360
+        s: 100, // 0-100
+        l: 50, // 0-100
+        a: 1, // 0-1
+
+        hMin: 10,
+        hMax: 80,
+
         speed: 1,
-        gap: 120 // 颜色跨度 0-255
+        gap: 120 // 渐变始终的颜色跨度 0-255
     }
 
     window.onload = () => {
@@ -57,10 +56,7 @@
         boxLayer.style.height = `${configBox.frameHeight / 2}px`
         document.documentElement.append(gradientLayer, boxLayer)
 
-        configGradient.r = randomFloat(configGradient.rMin, configGradient.rMax)
-        configGradient.g = randomFloat(configGradient.gMin, configGradient.gMax)
-        configGradient.b = randomFloat(configGradient.bMin, configGradient.bMax)
-
+        configGradient.h = randomFloat(configGradient.hMin, configGradient.hMax)
 
         draw()
 
@@ -86,10 +82,15 @@
         let contextGradient = document.getElementById('gradientLayer').getContext('2d')
         contextGradient.clearRect(0, 0, configBox.frameWidth, configBox.frameHeight)
 
+        configGradient.h = configGradient.h + 1
+
+        if (configGradient.h > 360) configGradient.h = 0
+
+        console.log(JSON.stringify(configGradient))
 
         let gradient = contextGradient.createLinearGradient(0, 0, configBox.frameWidth, configBox.frameHeight)
-        gradient.addColorStop(0, `rgb(${configGradient.r}, ${configGradient.g}, ${configGradient.b})`)
-        gradient.addColorStop(1, `rgb(${configGradient.r + configGradient.gap}, ${configGradient.g + configGradient.gap}, ${configGradient.b + configGradient.gap})`)
+        gradient.addColorStop(0, `hsl(${configGradient.h}, ${configGradient.s}%, ${configGradient.l}%)`)
+        gradient.addColorStop(1, `hsl(${configGradient.h + configGradient.gap}, ${configGradient.s}%, ${configGradient.l}%)`)
         contextGradient.fillStyle = gradient
         contextGradient.fillRect(0, 0, configBox.frameWidth, configBox.frameHeight)
 
