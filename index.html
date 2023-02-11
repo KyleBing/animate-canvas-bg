@@ -5,9 +5,13 @@
     <title>Canvas</title>
 </head>
 <body>
-<!--<canvas id="canvas" width="1600" height="1000"></canvas>-->
+
 
 <script>
+    let configFrame = {
+        width: 1600,
+        height: 1000,
+    }
     let configBox = {
         speedMin: 0.01,
         speedMax: 0.3,
@@ -15,13 +19,13 @@
         directionX: 1,
         directionY: 1,
 
-        frameWidth: 1600,
-        frameHeight: 1000,
-
         boxCount: 20,
 
         boxSizeMin: 20,
         boxSizeMax: 120,
+
+        colorHMin: 160, // 颜色 hsl h取值
+        colorHMax: 180
     }
 
     let configGradient = {
@@ -30,8 +34,9 @@
         l: 50, // 0-100
         a: 1, // 0-1
 
-        hMin: 10,
-        hMax: 80,
+        hMin: 150,
+        hMax: 160,
+        hColorDirection: 1, // +1 -1
 
         speed: 0.1,
         gap: 60 // 渐变始终的颜色跨度 0-255
@@ -40,6 +45,8 @@
     let boxBuffer = []
 
     window.onload = () => {
+        configFrame.height = innerHeight * 2
+        configFrame.width = innerWidth * 2
         init()
     }
 
@@ -47,16 +54,16 @@
 
         let gradientLayer = document.createElement("canvas")
         gradientLayer.setAttribute('id', 'gradientLayer')
-        gradientLayer.setAttribute('width', configBox.frameWidth)
-        gradientLayer.setAttribute('height', configBox.frameHeight)
-        gradientLayer.style.width = `${configBox.frameWidth / 2}px`
-        gradientLayer.style.height = `${configBox.frameHeight / 2}px`
+        gradientLayer.setAttribute('width', configFrame.width)
+        gradientLayer.setAttribute('height', configFrame.height)
+        gradientLayer.style.width = `${configFrame.width / 2}px`
+        gradientLayer.style.height = `${configFrame.height / 2}px`
         let boxLayer = document.createElement("canvas")
         boxLayer.setAttribute('id', 'boxLayer')
-        boxLayer.setAttribute('width', configBox.frameWidth)
-        boxLayer.setAttribute('height', configBox.frameHeight)
-        boxLayer.style.width = `${configBox.frameWidth / 2}px`
-        boxLayer.style.height = `${configBox.frameHeight / 2}px`
+        boxLayer.setAttribute('width', configFrame.width)
+        boxLayer.setAttribute('height', configFrame.height)
+        boxLayer.style.width = `${configFrame.width / 2}px`
+        boxLayer.style.height = `${configFrame.height / 2}px`
         document.documentElement.append(gradientLayer, boxLayer)
 
         configGradient.h = randomFloat(configGradient.hMin, configGradient.hMax)
@@ -66,13 +73,13 @@
         for (let i = 0; i < configBox.boxCount; i++) {
             boxBuffer.push({
                 name: i,
-                color: randomColor(),
+                color: randomColor(configBox.colorHMin, configBox.colorHMax),
                 speedX: randomSpeed().speedX,
                 speedY: randomSpeed().speedY,
                 directionX: randomDirection(),
                 directionY: randomDirection(),
                 boxSize: randomBoxSize(configBox.boxSizeMin,configBox.boxSizeMax), // 方块大小
-                position: randomPosition(configBox) // 位置
+                position: randomPosition(configFrame) // 位置
             })
         }
 
@@ -86,27 +93,28 @@
     function draw() {
         // gradient
         let contextGradient = document.getElementById('gradientLayer').getContext('2d')
-        contextGradient.clearRect(0, 0, configBox.frameWidth, configBox.frameHeight)
+        contextGradient.clearRect(0, 0, configFrame.width, configFrame.height)
 
-        configGradient.h = configGradient.h + configGradient.speed
+        configGradient.h = configGradient.h + configGradient.speed * configGradient.hColorDirection
 
-        if (configGradient.h > 360) configGradient.h = 0
+        if (configGradient.h > configGradient.hMax) configGradient.hColorDirection = -1
+        if (configGradient.h < configGradient.hMin) configGradient.hColorDirection = +1
 
-        let gradient = contextGradient.createLinearGradient(0, 0, configBox.frameWidth, configBox.frameHeight)
-        // let gradient = contextGradient.createRadialGradient(configBox.frameWidth/2, configBox.frameHeight/2, 500, configBox.frameWidth/2, configBox.frameHeight/2, 800)
+        let gradient = contextGradient.createLinearGradient(0, 0, configFrame.width, configFrame.height)
+        // let gradient = contextGradient.createRadialGradient(configFrame.width/2, configFrame.height/2, 500, configFrame.width/2, configFrame.height/2, 800)
         gradient.addColorStop(0, `hsl(${configGradient.h}, ${configGradient.s}%, ${configGradient.l}%)`)
         gradient.addColorStop(1, `hsl(${configGradient.h + configGradient.gap}, ${configGradient.s}%, ${configGradient.l}%)`)
         contextGradient.fillStyle = gradient
-        contextGradient.fillRect(0, 0, configBox.frameWidth, configBox.frameHeight)
+        contextGradient.fillRect(0, 0, configFrame.width, configFrame.height)
 
 
         // create boxes
         let context = document.getElementById('boxLayer').getContext('2d')
-        context.clearRect(0, 0, configBox.frameWidth, configBox.frameHeight)
+        context.clearRect(0, 0, configFrame.width, configFrame.height)
 
         boxBuffer.forEach(box => {
-            if (box.position.x > configBox.frameWidth - box.boxSize.width) box.directionX = -1
-            if (box.position.y > configBox.frameHeight - box.boxSize.height)box.directionY = -1
+            if (box.position.x > configFrame.width - box.boxSize.width) box.directionX = -1
+            if (box.position.y > configFrame.height - box.boxSize.height)box.directionY = -1
             if (box.position.x < 0) box.directionX = 1
             if (box.position.y < 0) box.directionY = 1
 
@@ -136,12 +144,12 @@
     }
     /**
      * 随机位置
-     * @param config
+     * @param configFrame
      * @returns {{x: *, y: *}}
      */
-    function randomPosition(config){
-        let randomX = Math.random() * config.frameWidth
-        let randomY = Math.random() * config.frameHeight
+    function randomPosition(configFrame){
+        let randomX = Math.random() * configFrame.width
+        let randomY = Math.random() * configFrame.height
         return {
             x: randomX,
             y: randomY
@@ -176,11 +184,9 @@
      * 随机颜色值
      * @returns string
      */
-    function randomColor(){
-        let randomR = Math.random() * 255
-        let randomG = Math.random() * 255
-        let randomB = Math.random() * 255
-        return `rgb(${randomR}, ${randomG}, ${randomG})`
+    function randomColor(min, max){
+        let randomH = randomInt(min, max)
+        return `hsl(${randomH}, 100%, 50%)`
     }
 
     /**
@@ -219,9 +225,6 @@
         position: fixed;
         top: 0;
         left: 0;
-        border: 1px solid gray;
-        height: 500px;
-        width: 800px;
     }
 </style>
 </html>
