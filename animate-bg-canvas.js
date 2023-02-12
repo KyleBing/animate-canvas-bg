@@ -69,6 +69,10 @@ function updateFrameAttribute(gradientLayer, boxLayer){
     gradientLayer.style.width = `${configFrame.width / 2}px`
     gradientLayer.style.height = `${configFrame.height / 2}px`
     gradientLayer.style.zIndex = '-3'
+    gradientLayer.style.userSelect = 'none'
+    gradientLayer.style.position = 'fixed'
+    gradientLayer.style.top = '0'
+    gradientLayer.style.left = '0'
 
     boxLayer.setAttribute('id', 'boxLayer')
     boxLayer.setAttribute('width', configFrame.width)
@@ -76,6 +80,10 @@ function updateFrameAttribute(gradientLayer, boxLayer){
     boxLayer.style.width = `${configFrame.width / 2}px`
     boxLayer.style.height = `${configFrame.height / 2}px`
     boxLayer.style.zIndex = '-2'
+    boxLayer.style.userSelect = 'none'
+    boxLayer.style.position = 'fixed'
+    boxLayer.style.top = '0'
+    boxLayer.style.left = '0'
 }
 
 function init(){
