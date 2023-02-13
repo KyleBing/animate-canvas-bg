@@ -117,6 +117,8 @@ function draw() {
     if (configGradient.h > configGradient.hMax) configGradient.hColorDirection = -1
     if (configGradient.h < configGradient.hMin) configGradient.hColorDirection = +1
 
+
+    // let gradient = contextGradient.createConicGradient(0, configFrame.width / 2, configFrame.height / 2)
     let gradient = contextGradient.createLinearGradient(0, 0, configFrame.width, configFrame.height)
     // let gradient = contextGradient.createRadialGradient(configFrame.width/2, configFrame.height/2, 500, configFrame.width/2, configFrame.height/2, 800)
     gradient.addColorStop(0, `hsl(${configGradient.h}, ${configGradient.s}%, ${configGradient.l}%)`)
