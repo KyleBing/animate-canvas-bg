@@ -26,7 +26,7 @@ let configBox = {
     boxSizeMax: 200,
 
     opacityMin: 0.3, // 透明度范围 0-1
-    opacityMax: 0.9,
+    opacityMax: 0.5,
 
     colorHMin: 160, // 颜色范围 hsl h取值
     colorHMax: 180
@@ -35,7 +35,7 @@ let configBox = {
 let configGradient = {
     h: 0,    // 颜色   0-360
     s: 100,  // 饱和度 0-100
-    l: 50,   // 亮度   0-100
+    l: 70,   // 亮度   0-100
     a: 1,    // 透明度 0-1
 
     hMin: 150,
@@ -92,7 +92,9 @@ function init(){
     for (let i = 0; i < configBox.boxCount; i++) {
         boxBuffer.push({
             name: i,
-            color: randomColor(configBox.colorHMin, configBox.colorHMax, configBox.opacityMin, configBox.opacityMax),
+            color: randomOpacity(configBox.opacityMin, configBox.opacityMax),
+            // color: `hsl(0 0% 100% / ${randomOpacity()})`,
+            // color: randomColor(configBox.colorHMin, configBox.colorHMax, configBox.opacityMin, configBox.opacityMax), // 带颜色的随机颜色
             speedX: randomSpeed().speedX,
             speedY: randomSpeed().speedY,
             directionX: randomDirection(),
@@ -207,10 +209,12 @@ function randomColor(hMin, hMax, opacityMin, opacityMax){
 
 /**
  * 随机透明度
- * @returns {number}
+ * @returns {string}
  */
-function randomOpacity(){
-    return Math.random()
+function randomOpacity(minOpacity, maxOpacity){
+    let randomOpacity = Math.random() * (maxOpacity - minOpacity) + minOpacity
+    let randomOpacityString = `${(randomOpacity * 100).toFixed(2)}%`
+    return `hsl(0 0% 100% / ${randomOpacityString})`
 }
 
 /**
@@ -222,6 +226,7 @@ function randomOpacity(){
 function randomInt(min, max){
     return Number((Math.random() * (max - min) + min).toFixed(0))
 }
+
 /**
  * 生成随机整数
  * @param min
