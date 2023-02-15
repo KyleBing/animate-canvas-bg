@@ -1,0 +1,27 @@
+{
+  "name": "animate-bg-canvas",
+  "version": "0.1.1",
+  "description": "animated canvas bg, blue, square boxes",
+  "main": "animate-bg-canvas.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KyleBing/animate-canvas-bg.git"
+  },
+  "keywords": [
+    "canvas",
+    "animate",
+    "boxes",
+    "bg",
+    "background",
+    "js"
+  ],
+  "author": "KyleBing",
+  "license": "GPL",
+  "bugs": {
+    "url": "https://github.com/KyleBing/animate-canvas-bg/issues"
+  },
+  "homepage": "https://github.com/KyleBing/animate-canvas-bg#readme"
+}

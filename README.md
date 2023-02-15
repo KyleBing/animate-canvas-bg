@@ -4,6 +4,14 @@
 
 canvas animated bg
 
+## 使用说明
+
+```js
+let animateCanvas = new AnimatedCanvasBG()
+
+animateCanvas.play()  // 方块动起来
+animateCanvas.stop()  // 方块不动
+```
 
 
 ## log
