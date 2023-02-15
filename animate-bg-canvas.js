@@ -276,3 +276,7 @@ function randomInt(min, max){
 function randomFloat(min, max){
     return Number(Math.random() * (max - min) + min)
 }
+
+exports = {
+    AnimatedCanvasBG
+}
