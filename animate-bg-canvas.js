@@ -80,7 +80,12 @@ class AnimatedCanvasBG {
     speedDown(){}
 
     destroy(){
-
+        this.isPlaying = false
+        let gradientLayer = document.getElementById('gradientLayer')
+        let boxLayer = document.getElementById('boxLayer')
+        gradientLayer.remove()
+        boxLayer.remove()
+        console.log('动画已停止')
     }
 
 
@@ -138,8 +143,12 @@ class AnimatedCanvasBG {
 
 
     draw() {
+        let canvasGradient = document.getElementById('gradientLayer')
+        if (!canvasGradient){
+            return
+        }
         // gradient
-        let contextGradient = document.getElementById('gradientLayer').getContext('2d')
+        let contextGradient = canvasGradient.getContext('2d')
         contextGradient.clearRect(0, 0, this.configFrame.width, this.configFrame.height)
 
         this.configGradient.h = this.configGradient.h + this.configGradient.speed * this.configGradient.hColorDirection
