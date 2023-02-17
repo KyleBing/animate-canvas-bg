@@ -23,5 +23,8 @@
   "bugs": {
     "url": "https://github.com/KyleBing/animate-canvas-bg/issues"
   },
-  "homepage": "https://github.com/KyleBing/animate-canvas-bg#readme"
+  "homepage": "https://github.com/KyleBing/animate-canvas-bg#readme",
+  "publishConfig": {
+    "@KyleBing:registry": "https://npm.pkg.github.com"
+  }
 }
