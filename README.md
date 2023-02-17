@@ -7,6 +7,7 @@
 ## 使用说明
 
 ### 1. 浏览器
+使用 `animate-bg-canvas-browser.js` 这个文件
 ```js
 // 新建对象时，会自动呈现动画效果
 let animateCanvas = new AnimatedCanvasBG()
@@ -18,6 +19,10 @@ animateCanvas.stop()  // 方块不动
 ```
 
 ### 2. Vue
+
+```bash
+npm i animate-bg-canvas
+```
 
 ```js
 import { AnimatedCanvasBG } from "animate-bg-canvas"
