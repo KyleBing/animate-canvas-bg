@@ -6,7 +6,7 @@
  * @date-init: 2023-02-11
  * @date-update: 2023-02-11
  * @version: v0.1.2
- * @platform: NPM
+ * @platform: Browser
  */
 
 class AnimatedCanvasBG {
@@ -327,8 +327,4 @@ function randomInt(min, max){
  */
 function randomFloat(min, max){
     return Number(Math.random() * (max - min) + min)
-}
-
-export {
-    AnimatedCanvasBG
 }
