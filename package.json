@@ -25,6 +25,6 @@
   },
   "homepage": "https://github.com/KyleBing/animate-canvas-bg#readme",
   "publishConfig": {
-    "@KyleBing:registry": "https://npm.pkg.github.com"
+    "registry": "https://npm.pkg.github.com"
   }
 }
